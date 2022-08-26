@@ -7,7 +7,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <Encoder.h>
-#include "OneButton.h"
+
 
 
 LiquidCrystal_I2C lcd(0x27, 16,2);
