@@ -20,8 +20,6 @@ DeviceAddress Thermometer;    // creating Name of the themp sensor
 
 Encoder myencod(2,4); // creating Encoder
 
-//OneButton button1(PinSW, true);
-
 
 //defining some global Variables and setting the start/standart value
 
@@ -65,6 +63,7 @@ void initdysplay(){
 }
 
 // creaing function for the menu
+
 void displayMenu(){
 
   while (menuflag)  // loop depending on the menuflag, is running while true 
