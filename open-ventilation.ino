@@ -7,7 +7,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <Encoder.h>
-
+#include "OneButton.h"
 
 
 LiquidCrystal_I2C lcd(0x27, 16,2);
@@ -20,13 +20,23 @@ DeviceAddress Thermometer;    // creating Name of the themp sensor
 
 Encoder myencod(2,4); // creating Encoder
 
+//OneButton button1(PinSW, true);
+
 
 //defining some global Variables and setting the start/standart value
 
 long position = 0;
+const int readTimer = 1000;
+float readTime = 0;
+bool newRead = false;
 
-int fanspeed = 0;
+byte fanspeed = 0;
 int fanpercent = 0;
+const int fanmin = 20;
+float fantime = 0;
+const int timer = 2500;
+bool fanboost = false;
+bool prevFanSpeed = 0;
 
 int maxtemp = 30;
 int mintemp = 20;
@@ -44,13 +54,14 @@ bool menuset = false;
 int menuinit = 0;
 
 String mode = "PLA";
+bool modeFlag = true;
 
 float tempC;
 int fan = 10;
 
 //crating function for the botscreen 
 void initdysplay(){
-  //lcd.clear();
+  lcd.clear();
   lcd.setCursor(1,0);
   lcd.print("Starte System!");
   for (int i = 0; i < 16; i++)
@@ -62,8 +73,60 @@ void initdysplay(){
 
 }
 
-// creaing function for the menu
+void display(){
+  lcd.clear();
+  lcd.setCursor(2,0);
+  lcd.print("Temp:");
+  lcd.setCursor(12,0);
+  lcd.print((char)223);
+  lcd.print("C");
 
+  lcd.setCursor(0,1);
+  lcd.print("M:");
+
+  lcd.setCursor(7,1); 
+  lcd.print("Fan:");
+
+}
+
+void displayValue(){
+  for (int i = 7; i < 12 ; i++)
+  {
+    lcd.setCursor(i,0);
+    lcd.print(" ");
+  }
+  
+  lcd.setCursor(7,0);
+  lcd.print(tempC);
+
+  if (modeFlag == true)
+  {
+    for (int i = 2; i < 7; i++)
+    {
+      lcd.setCursor(i,1);
+      lcd.print(" ");
+    }
+    
+    lcd.setCursor(2,1);
+    lcd.print(mode);
+    modeFlag = false;
+
+  }
+  
+
+  for (int i = 11; i < 16 ; i++)
+  {
+    lcd.setCursor(i,1);
+    lcd.print(" ");
+  }
+
+  lcd.setCursor(11,1); 
+  lcd.print(fanpercent);
+  lcd.print("%");
+}
+
+
+// creaing function for the menu
 void displayMenu(){
 
   while (menuflag)  // loop depending on the menuflag, is running while true 
@@ -71,9 +134,8 @@ void displayMenu(){
     
     if (menuset == true)
     {
-      
-      lcd.home();
       lcd.clear();
+      lcd.home();
       lcd.print("*****MENUE******"); 
       delay(2000);
       menuset = false;
@@ -92,13 +154,13 @@ void displayMenu(){
       menuestate = 0;   // seting the menu variable to 0 for encoder postions <0
       myencod.write(0);    
     }
-    else if (position > 5)
+    else if (position > 4)
     {
-      menuestate = 5;
-      myencod.write(20);
+      menuestate = 4;
+      myencod.write(16);
     }
         
-    switch (menuestate)   // 
+    switch (menuestate)   // switching between the different menuoptions
     {      
 
     case 0:
@@ -156,27 +218,11 @@ void displayMenu(){
     case 4:
       lcd.clear();
       lcd.setCursor(0,0);
-      lcd.print(">PA");
-      lcd.setCursor(1,1);
-      lcd.print("IGLIDUR");
-      
-      if (digitalRead(PinSW)== LOW)
-      {
-        menueselect = 5;
-      }      
-
-      break;
-
-    case 5:
-      lcd.clear();
-      lcd.setCursor(1,0);
-      lcd.print("PA");
-      lcd.setCursor(0,1);
       lcd.print(">IGLIDUR");
       
       if (digitalRead(PinSW)== LOW)
       {
-        menueselect = 6;
+        menueselect = 5;
       }      
 
       break;
@@ -186,67 +232,65 @@ void displayMenu(){
     delay(menudelay);
 
 
-    switch (menueselect)
+    Serial.print(menuflag);
+    Serial.println(menueselect);
+
+    switch (menueselect) // Settings depending on the selectet material and resetting some flags for the menue
     {
     case 1:
       mode = "PLA";
       mintemp = 20;
-      maxtemp = 30;
+      maxtemp = 35;
       menuflag = false;
       menueselect = 0;
       keypresstime = 0;
+      modeFlag = true;
 
       break;
     
     case 2:
       mode = "PETG";
       mintemp = 20;
-      maxtemp = 30;
+      maxtemp = 40;
       menuflag = false;
       menueselect = 0;
       keypresstime = 0;
+      modeFlag = true;
 
       break;
 
     case 3:
       mode = "FLEX";
       mintemp = 20;
-      maxtemp = 30;
+      maxtemp = 45;
       menuflag = false;
       menueselect = 0;
       keypresstime = 0;
+      modeFlag = true;
     
       break;
 
     case 4:
       mode = "PC";
       mintemp = 26;
-      maxtemp = 36;
+      maxtemp = 55;
       menuflag = false;
       menueselect = 0;
       keypresstime = 0;
+      modeFlag = true;
 
       break;
 
     case 5:
-      mode = "PA";
-      mintemp = 28;
-      maxtemp = 38;
-      menuflag = false;
-      menueselect = 0;
-      keypresstime = 0;
-
-      break;
-
-    case 6:
       mode = "IGLI";
       mintemp = 28;
-      maxtemp = 38;
+      maxtemp = 50;
       menuflag = false;
       menueselect = 0;
       keypresstime = 0;
+      modeFlag = true;
 
-      break;    
+      break;
 
     default:
       break;
@@ -257,53 +301,60 @@ void displayMenu(){
   
   }
   keypresstime = 0;
+  display();            // display the standard screen 
+  displayValue();       // display the curent Values 
   
 }
 
 
-void display(){
-  lcd.clear();
-  lcd.setCursor(1,0);
-  lcd.print("Temp:");
-  lcd.print(tempC);
-  lcd.print((char)223);
-  lcd.print("C");
-
-  lcd.setCursor(1,1);
-  lcd.print(mode);
-
-  lcd.setCursor(6,1); 
-  lcd.print("Fan:");
-  lcd.print(fanpercent);
-  lcd.print("%");
-
-
-}
 
 
 void readSensor(){
   
-  sensors.requestTemperatures();
+  sensors.requestTemperatures();            //getting the temperatuer from the sensor 
 
   tempC = sensors.getTempC(Thermometer);
 
-  if (tempC >= mintemp && tempC <= maxtemp)
+  if (tempC >= mintemp && tempC <= maxtemp)   // map the speed of the fan depending on the Temp range of the material
   {
     fanspeed = map(tempC, mintemp, maxtemp, 0, 255);
+  
+  }
+  else if (tempC > maxtemp)     // set te max speed of the fan if the Temp is over the max temp
+  {
+    fanspeed = 255;
   }
   else 
   {
     fanspeed = 0;
   }
 
-  fanpercent = map(fanspeed, 0, 255, 0,100);
+  fanpercent = map(fanspeed, 0, 255, 0,100);  //map the speed to the % dutycicle 
+  
 
-  if (fanpercent < 20){
-    fanpercent = 0;
-    fanpercent = 0;
+  if (fanpercent < fanmin)          // the fan is not realy running if the dutycicle is less then 20%
+  {
+    fanspeed = 0;
+    fanpercent = 0; 
   }
 
+  if (fanpercent > 0 && prevFanSpeed == 0) //set a Flg to boost the Fan for a save startup wenn the fan was not running bevore
+  {
+    fanboost = true;
+  }
+
+  if (fanpercent >= 0 && fanpercent < fanmin)
+  {
+    prevFanSpeed = 0;
+  }
+  else
+  {
+    prevFanSpeed = 1;
+  }
+
+  
 }
+
 
 void setup() {
 
@@ -320,13 +371,13 @@ void setup() {
   lcd.init();
   lcd.backlight();
   initdysplay();
-    
+  display();
 
 }
 
 void loop() {
 
-  if (digitalRead(PinSW) == HIGH)
+  if (digitalRead(PinSW) == HIGH)  // query if the rotaryencoder is pressed to start the menu 
  {
    prevKeyState = HIGH;
  }
@@ -347,19 +398,30 @@ void loop() {
 
  switch (menuinit)
  {
- case 1:
+ case 1:              //going to the setup menu
    displayMenu();
    menuinit = 0;
    break;
  
  default:
- readSensor();
- analogWrite(fan, fanspeed);
- 
- lcd.clear();
- display();
 
+ if (fanboost == true )   //wehn the Fanboost flag was set, here the fan runs for 2,5s at full speed, to get it reliable runns
+ {
+   fantime = millis();
+   fanboost = false;
+
+   while (millis() - fantime <= timer)
+    {
+      analogWrite(fan, 255);
+    }
+ }
+
+
+ analogWrite(fan, fanspeed);  // write the normal fanspeed to the pin 
+ displayValue();              // display the current values
+ readSensor();                // get new temp values from the sensor
   break;
+
  }
   
 
