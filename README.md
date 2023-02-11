@@ -1,8 +1,8 @@
 # Open-Ventilation
 
-This is an Arduino sketch to controll an 12V Fan. I use this to ventilate my Printercabinet. 
-
 <img src="https://user-images.githubusercontent.com/74827898/218267789-d42504ba-00f3-40d7-9853-e34cf54e7a7b.jpg" width="403" height="302">
+
+This is an Arduino sketch to PWM controll a 12V Fan, the PCB files for the PCB and the CAD-Data for my Printercabinet housing. 
 
 The mainscreen shows the current temperature, material and the dutycicle of the fan.
 
@@ -19,4 +19,19 @@ Abov the max temp the fan runns with 100% dutycicle.
 In the PCB folder are the files for getting the PCB according to the circuit diagram.
 
 You can finde the CAD-Files for the Housing at my Printables Profile https://www.printables.com/de/model/162908-housing-for-cabinet-ventilation-control
+
+# BOM
+
+1 x Arduino Nano\
+1 x 16x2 LCD with i2C backpack\
+1 x DS18B2\
+1 x Rotaryencoder with button\
+1 x IRFZ44N MOSFET\
+1 x 1N4007 Diode\
+1 x 10 kΩ Resistor\
+1 x 4,7 kΩ Resistor\
+1 x 220 Ω Resistor\
+1 x 12V Fan (2 or 3 Wire)\
+1 x 12V powersuply 
+
 
