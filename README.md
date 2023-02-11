@@ -1,4 +1,4 @@
-# open-Ventilation
+# Open-Ventilation
 
 This is an Arduino sketch to controll an 12V Fan. I use this to ventilate my Printercabinet. 
 
