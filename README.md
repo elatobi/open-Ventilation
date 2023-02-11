@@ -16,7 +16,7 @@ Abov the max temp the fan runns with 100% dutycicle.
 <img src="https://user-images.githubusercontent.com/74827898/218267813-f431670b-728f-423f-8b89-dc367e704677.jpg" width="294" height="197">
 
 
-
+In the PCB folder are the files for getting the PCB according to the circuit diagram.
 
 You can finde the CAD-Files for the Housing at my Printables Profile https://www.printables.com/de/model/162908-housing-for-cabinet-ventilation-control
 
