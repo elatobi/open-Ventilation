@@ -1,19 +1,19 @@
 # Open-Ventilation
 
-<img src="https://user-images.githubusercontent.com/74827898/218267789-d42504ba-00f3-40d7-9853-e34cf54e7a7b.jpg" width="403" height="302">
+<img src="https://user-images.githubusercontent.com/74827898/218269923-bbefb53c-6b16-4999-8544-78e45443e4aa.jpeg" width="403" height="302">
 
 This is an Arduino sketch to PWM controll a 12V Fan, the PCB files for the PCB and the CAD-Data for my Printercabinet housing. 
 
 The mainscreen shows the current temperature, material and the dutycicle of the fan.
 
-<img src="https://user-images.githubusercontent.com/74827898/218267807-d876c021-c1a1-4d8f-ba48-8c7f13a479c5.jpg" width="336" height="231">
+<img src="https://user-images.githubusercontent.com/74827898/218269938-e21277fe-43e8-4590-ba35-f5fb0ce41b7e.jpeg" width="336" height="231">
 
 By pressing the button of the rotaryencoder for 3s, the setup menu gets opend. Ther you can set the different materials.
 For now there is PLA, PETG, FLEX, PC and IGLIDUR a material from Igus. 
 Each material has its own min and max temp. Between thise temperatures the fan runns with a maped dutycicle, below the min temp the fan is not running.
 Abov the max temp the fan runns with 100% dutycicle.
 
-<img src="https://user-images.githubusercontent.com/74827898/218267813-f431670b-728f-423f-8b89-dc367e704677.jpg" width="294" height="197">
+<img src="https://user-images.githubusercontent.com/74827898/218269966-f96a36b7-01b3-446a-84e5-3d0d535cc380.jpeg" width="294" height="197">
 
 
 In the PCB folder are the files for getting the PCB according to the circuit diagram.
