@@ -20,8 +20,6 @@ DeviceAddress Thermometer;    // creating Name of the themp sensor
 
 Encoder myencod(2,4); // creating Encoder
 
-//OneButton button1(PinSW, true);
-
 
 //defining some global Variables and setting the start/standart value
 
@@ -38,7 +36,7 @@ const int timer = 2500;
 bool fanboost = false;
 bool prevFanSpeed = 0;
 
-int maxtemp = 30;
+int maxtemp = 35;
 int mintemp = 20;
 
 const int PinSW = 3;    
@@ -142,13 +140,9 @@ void displayMenu(){
       digitalWrite(PinSW, HIGH);
       menuflag = HIGH;
     }
-    
-
         
     position = myencod.read()/4;  // read the postion of the encoder
-    menuestate=position;
-    
-    
+    menuestate=position;    
    
     if (position <= 0){   // checking if the encoder has value <0
       menuestate = 0;   // seting the menu variable to 0 for encoder postions <0
@@ -293,9 +287,7 @@ void displayMenu(){
       break;
 
     default:
-      break;
-
-      
+      break;      
     
     }
   
@@ -320,7 +312,7 @@ void readSensor(){
     fanspeed = map(tempC, mintemp, maxtemp, 0, 255);
   
   }
-  else if (tempC > maxtemp)     // set te max speed of the fan if the Temp is over the max temp
+  else if (tempC > maxtemp)     // set the max speed of the fan if the Temp is over the max temp
   {
     fanspeed = 255;
   }
@@ -338,12 +330,14 @@ void readSensor(){
     fanpercent = 0; 
   }
 
+
+
   if (fanpercent > 0 && prevFanSpeed == 0) //set a Flg to boost the Fan for a save startup wenn the fan was not running bevore
   {
     fanboost = true;
   }
 
-  if (fanpercent >= 0 && fanpercent < fanmin)
+  if (fanpercent < fanmin)
   {
     prevFanSpeed = 0;
   }
